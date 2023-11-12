@@ -2,6 +2,9 @@
 
 Notes taken by me during learning Flutter...
 
+## Why Flutter?
+- Most frameworks use native frameworks. but flutter uses its own rendering engine to draw the widgets on the canvas which is our screen
+
 To work with column 
 - main axis will be vertical 
 - cross axis will be horizontal
@@ -33,7 +36,7 @@ for using an image to our code follow th following format
 ```dart 
 
     Image.asset(
-      'assets/completion.png',
+      'asset/images/completion.png',
       fit: BoxFit.cover,
     ),
 
@@ -156,6 +159,7 @@ onPressed: () {
 ```
 
 To avoid that of the stack just use the ```popAndPushNamed``` instead of ```pushnamed``` in above code
+
 ---
 
 ## !debug
@@ -192,23 +196,23 @@ onChanged: (val) {      // The changed value will be stored in this varable in S
     setState(() {});}   // Rrcall the build method to refresh the current page
 ```
 ---
-## custom button using Container
+## Custom button using Container
 
 We can simply create the button using container and it's properties here is  an example on how to do it 
 
 ```dart
 Container(
-  height: 50,
-  width: 125,
-  alignment: Alignment.center,
-  decoration: BoxDecoration(
-    color: Colors.black12,
-    borderRadius: BorderRadius.circular(15),
-    // border: Border.all(1)
+  height: 50, // Height of the button
+  width: 125, // Width of the button
+  alignment: Alignment.center, // Alignment of the text on the button
+  decoration: BoxDecoration( // Some decoration
+    color: Colors.black12,  // Background color
+    borderRadius: BorderRadius.circular(15), // Circular radius for all the corners
+    border: Border.all(color: Colors.deepPurpleAccent), // Add the border on all the sides with the specified color
   ),
-  child: Text(
+  child: Text( // The child of the container
     "Login",
-    style: TextStyle(
+    style: TextStyle( // Child's decoration
       color: Colors.deepPurpleAccent,
       fontWeight: FontWeight.bold,
       fontSize: 17,
@@ -228,6 +232,198 @@ InkWell(
   // Rest of the Container as button code
 ),
 ```
+To animate the above created button change ```Container``` type to ```AnimatedContainer``` and add ```duration: Duration(seconds: 1),``` this line to it.
 
---- 
+To add basic animation Here's the basic idea we take a boolean variable by default false value. When we click on the button the the defined variable value will be inverse by simple logic ```var=!var;``` 
+and change the button properties as follows: 
+```dart
+(BorderRadius.circular(changeButton ? 35 : 15),
+(width: changeButton ? 50 : 125,))
+child: changeButton
+ ? Icon(
+     Icons.done,
+     color: Colors.deepPurpleAccent,
+   )
+ : Text(
+     "Login",
+     style: TextStyle(
+       color: Colors.deepPurpleAccent,
+       fontWeight: FontWeight.bold,
+       fontSize: 17,
+     ),
+   ),
+```
+such that after clicking on the button button's width will shrink to its new value as well as it's border too will be changed. You can use this too
+```dart
+shape: changeButton
+  ? BoxShape.circle
+  : BoxShape.rectangle,
+```
 
+---
+
+## TextFormField Validation 
+To validate the taken input from the TextField simply use the following property of the TextFormField
+```dart
+validator: (value) {
+  if (value!.isEmpty) {
+    return "Username cannot be empty";
+  }
+  return null;
+}
+```
+but first wrap the child in the form and set key as declared key above
+```dart
+final _formKey = GlobalKey<FormState>();
+child: Form(
+                key: _formKey,
+// body
+)                
+```
+and then add check to the function which performs the further actions
+```dart
+if (_formKey.currentState != null && _formKey.currentState!.validate()) {}
+```
+
+---
+
+## Drawer
+Drawer is the menu bar like part of the screen which appears after clicking on the 3 bars from the left side by default. This drawer is devided in some parts like DrawerHeader.
+Don't shring or wrap the text in label from drawer just truncate it
+Here is the modal drawer header format
+
+```dart
+DrawerHeader(
+padding: EdgeInsets.all(0),
+child: //Text("Sapate Vaibhav")  // The simple text can be usd as Header only
+    UserAccountsDrawerHeader(   // User Account type header
+  margin: EdgeInsets.all(0),
+  decoration: BoxDecoration(color: Colors.white),
+  accountName: Text("Sapate Vaibhav"),  //User name
+  accountEmail: Text("sapatevaibhav@duck.com"), // User email
+  currentAccountPicture: CircleAvatar(
+      backgroundImage: AssetImage("assets/vaibhav.png")), // User avatar
+))
+```
+
+To add items in our drawer use the following template additionaly we can give actions like onTap() and more on that specific item.
+```dart
+ ListTile(
+  leading: Icon(CupertinoIcons.home),
+  title: Text("Home"),
+),
+```
+
+---
+## ListView
+So we have done so many things now let's start some advanced things 
+first of all let's try working with the ListView 
+To create a basic list we can use the 
+```dart 
+ListView.builder( // Starting of the body
+  itemCount: MyModel.items.length,  // Get the item counnt from the MyModele class
+  itemBuilder: (context, index) { 
+    return ItemWidget(  // Call the function which creates list items
+      item: MyModel.items[index], // In MyModel class I have stored all the items in items variable
+    );
+  },
+),
+```
+below is the ItemWidget class which actually creates the ListItem 
+```dart
+class ItemWidget extends StatelessWidget { // Class initialization
+  final Item item; // declaration  of items
+
+  const ItemWidget({super.key, required this.item}); // constructor
+
+  @override
+  Widget build(BuildContext context) { // Init the widget building
+    return Card(  // This is what we want to return
+      child: ListTile( // The child is ListTile which provides various features
+        onTap: () { // What will happen when we tap on that specific ListItem
+          print("${item.name} pressed");
+        },
+        tileColor: Colors.white, // Background color
+        leading: Image.network(item.image), // leading means left part of thet specific tile
+        title: Text(item.name), // Heading of the tile
+        subtitle: Text(item.description, // Subheading of the tile
+            style: TextStyle(
+                fontStyle: FontStyle.italic, fontWeight: FontWeight.w200)),
+        trailing: Text( // Trailing means the right part of the specific tile
+          "₹ ${item.price}",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+      ),
+    );
+  }
+}
+
+```
+Additionaly we can change the shape of the card by using ```shape: StadiumBorder()``` property to that card.
+
+
+---
+## hierarchy
+Add this code to your dart file and see what exactly happens there and who exactly overrides and to whom.
+```dart
+ Center(child: Container(child: Text("Hello Bharat"),),),
+    Container(
+  height: 300,
+  width: 300,
+  color: Colors.red,
+  child: Container(
+    height: 50,
+    width: 50,
+    color: Colors.yellow,
+  ),
+),
+```
+---
+## JSON
+Now some things about JSON.
+JSON is a file type in which we store a simple key : value paired data/ JSON files can be used to save and retrive various types of data. As well as playing with JSON files is easier than it looks so it becomes handy to store data in those files.
+
+to load the local json file and store ut in the ```String``` we use the following code snippet.
+```dart
+final data = await rootBundle.loadString("assets/data/data.json");
+```
+Now as we have data stored in the ```String``` it is necessary to convert that data back to key : value pair (```Map```) to do this use the following line of the code
+```dart
+final decodedData = jsonDecode(data);
+```
+Now as we have the data in the format we wanted we can manipulate this data as we want.
+Look here I want only items present above Map called **products** to do this wee will work on following line
+```dart
+final productData = decodedData["products"];
+```
+---
+### factory
+When we use final variables in the code to change their value we can use a method named ```factory``` to change it. 
+To differentiate between the constructors too we use this.
+
+Create the constructor for above JSON data stored in map using factory
+```dart
+factory Item.fromMap(Map<String, dynamic> map) {
+```
+Now store everything into a new Item such that all key : value pairs from that map will be stored their respective key from item
+```dart
+return Item(
+      id: map["id"],
+      price: map["price"],
+      name: map["name"],
+      description: map["description"],
+      color: map["color"],
+      image: map["image"]);
+}
+```
+Now store everything in the Map again such that it can be easily accessed from any of the file by using following code
+```dart
+toMap() => {
+  "id": id,
+  "price": price,
+  "name": name,
+  "description": description,
+  "color": color,
+  "image": image
+};
+```
