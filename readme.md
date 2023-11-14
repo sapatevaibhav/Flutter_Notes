@@ -427,3 +427,64 @@ toMap() => {
   "image": image
 };
 ```
+---
+## Loading...
+Okay so now you want to add a loading screen when it is blank at start of the application... First I have increased the duration of that blank screen by using await 
+```dart
+await Future.delayed(Duration(seconds: 2)); // Delay the function by 2 seconds
+```
+after that now add the comaparison with wnull or ```.isNotEmpty``` to check for and by using ternery operator display the progressbar at the center of the screen.
+```dart
+ body: (MyModel.item.isNotEmpty) //If this condition is true then
+? ListView.builder( // Do this i.e. display the itemlist
+    itemCount: MyModel.item.length,
+    itemBuilder: (context, index) {
+      return ItemWidget(
+        item: MyModel.item[index],
+      );
+    },
+  )
+: Center(child: CircularProgressIndicator()), //else display the loading progress bar 
+```
+
+---
+## Short hand operator
+Want to make line of code more short the we can use the short hand operator instead of some curly braces and ```return``` keyword 
+```dart
+itemBuilder: (context, index) {
+  return ItemWidget(
+    item: MyModel.item[index],
+  );
+}//This is the original code and can be written as
+itemBuilder: (context, index)=>ItemWidget(
+    item: MyModel.item[index],
+  ); // Is saves some more coding
+```
+---
+## App icon 
+To change the appp icon first add the flutter ```flutter_launcher_icons``` to your ```pubspec.yaml``` file by using
+```bash
+flutter pub add flutter_launcher_icons
+```
+after adding this package to your dependency add new line as follows to the pubspec file 
+```yaml
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/logo.png"
+  adaptive_icon_foreground: "assets/logo.png"
+  adaptive_icon_background: "#ffffff"
+```
+after doint this stuff now run following command
+```bash
+dart run flutter_launcher_icons
+```
+---
+## Divider
+To add a divider to our file just use the following thing in the code
+```dart
+Divider(
+  color: Colors.black,
+  height: 20, // Adjust the height of the divider
+  thickness: 2, // Adjust the thickness of the divider
+),
+```
