@@ -461,7 +461,7 @@ itemBuilder: (context, index)=>ItemWidget(
   ); // Is saves some more coding
 ```
 ---
-## App icon 
+## App icon  / logo
 To change the appp icon first add the flutter ```flutter_launcher_icons``` to your ```pubspec.yaml``` file by using
 ```bash
 flutter pub add flutter_launcher_icons
@@ -488,3 +488,59 @@ Divider(
   thickness: 2, // Adjust the thickness of the divider
 ),
 ```
+
+--- 
+
+## application Lifecycle
+
+Worried about the application Lifecycle we have seen that thing in our regular android development
+here is the way how to implement that thing in Flutter.
+
+Are you worried about what application life cycle is onResume(), onPause(), onRestart() are some examples of it to let you remember the actual thing now here is the implementation.
+
+    
+```dart
+class _CalculatorViewState extends State<CalculatorView> {
+    late final AppLifecycleListener _listener;
+
+  @override
+  void initState() {
+    super.initState();
+    _listener = AppLifecycleListener(
+      onDetach: _onDetach,
+      onHide: _onHide,
+      onInactive: _onInactive,
+      onPause: _onPause,
+      onRestart: _onRestart,
+      onResume: _onResume,
+      onShow: _onShow,
+    );
+  }
+
+  void _onDetach() => log("Detached");
+  void _onHide() => log("Hidden"); 
+  void _onInactive() => log("Inactive"); 
+  void _onRestart() => log("Restart"); 
+  void _onResume() => log("Resume"); 
+  void _onShow() => log("Show"); 
+  void _onPause() => log("Paused"); 
+}
+```
+---
+
+Got error in the Test folder containing ```widget_test.dart``` I est folder is actually there to check if our application is really using the cases which wwe write there todo so we have to write some test cases in dart file there.
+To get close idea here is the actual test cases used for the calculator application.
+The test case uses addition to check if the outcome is correct or not.
+
+```dart
+// Advanced test case for the calculator
+await tester.enterText(find.byKey(const Key("displayOne")), "20"); // Insert the value to the textfield one
+await tester.enterText(find.byKey(const Key("displayTwo")), "30"); // Insert the value to the textfield two
+await tester.tap(find.byIcon(CupertinoIcons.add)); // Clicked on the addition symboled button +
+
+await tester.pump(); // Rebuild the app
+
+expect(find.text("50"), findsOneWidget); // Find the actual result
+```
+This test actually inserts the text into the TextFields (First two lines).
+then third life performs click on the + button to pereform addition operation after addition our actual app displays ouput in the Text widget which can be retrived by the last that is 5th line if not then the test case is failed and 4th line is to rebuild the app sucj that during checking output it must be there.
